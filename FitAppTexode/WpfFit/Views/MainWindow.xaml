@@ -6,7 +6,55 @@
         xmlns:local="clr-namespace:WpfFit"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <!--<Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Margin" Value="5" />
+        </Style>-->
+    </Window.Resources>
+    
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.6*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Menu Grid.ColumnSpan="2" >
+            <MenuItem Header="Сохранить">
+                <MenuItem Header="XML" Command="{Binding SaveCommand}" />
+                <MenuItem Header="JSON" Command="{Binding SaveCommand}" />
+                <MenuItem Header="CSV" Command="{Binding SaveCommand}" />
+            </MenuItem>
+        </Menu>
+
+        <TextBlock Grid.Column="0" Grid.Row="1">
+            Список пользователей
+        </TextBlock>
+
+        <TextBlock Grid.Column="1" Grid.Row="1">
+            График по выбранному пользователю
+        </TextBlock>
+
+        <DataGrid Grid.Column="0" Grid.Row="2" Margin="5 0 5 5"
+                  ItemsSource="{Binding Users}"
+                  SelectedItem="{Binding SelectedUser}">
+            
+        </DataGrid>        
+        
 
     </Grid>
 </Window>
