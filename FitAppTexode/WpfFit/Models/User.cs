@@ -16,22 +16,22 @@ namespace WpfFit.Models
         /// <summary>
         /// Average number of steps taken over the entire period.
         /// </summary>
-        public int AverageStepsNumber { get; private set; }
+        public int AverageStepsNumber { get; set; }
 
         /// <summary>
         /// The best result for the entire period.
         /// </summary>
-        public int TheBestResult { get; private set; }
+        public int TheBestResult { get; set; }
 
         /// <summary>
         /// The worst result for the entire period.
         /// </summary>
-        public int TheWorstResult { get; private set; }
+        public int TheWorstResult { get; set; }
 
         /// <summary>
         /// User data for the entire period ( <day, user information for a day> ).
         /// </summary>
-        public ObservableCollection<KeyValuePair<int, UserInformationForADay>> UserData { get; set; }
-            = new ObservableCollection<KeyValuePair<int, UserInformationForADay>>();
+        public Dictionary<int, UserInformationForADay> UserData { get; set; }
+            = new Dictionary<int, UserInformationForADay>();
     }
 }
