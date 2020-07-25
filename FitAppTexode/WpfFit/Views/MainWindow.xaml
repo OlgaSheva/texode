@@ -5,17 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfFit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="1200">
     <Window.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Margin" Value="5" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
-        <!--<Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="14" />
+        <Style TargetType="AccessText">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextAlignment" Value="Center" />
         </Style>
-        <Style TargetType="Button">
+        <!--<Style TargetType="Button">
             <Setter Property="Width" Value="40" />
             <Setter Property="Margin" Value="5" />
         </Style>-->
@@ -49,12 +50,26 @@
             График по выбранному пользователю
         </TextBlock>
 
-        <DataGrid Grid.Column="0" Grid.Row="2" Margin="5 0 5 5"
-                  ItemsSource="{Binding Users.Result}"
-                  SelectedItem="{Binding SelectedUser}">
-            
-        </DataGrid>        
-        
+        <ListView ItemsSource="{Binding Users.Result}"
+                  SelectedItem="{Binding SelectedUser}"
+                  Grid.Column="0" Grid.Row="2" Margin="5 0 5 5" HorizontalAlignment="Center" Name="ListView" VerticalAlignment="Top">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding UserName}" Width="auto">
+                        <AccessText Text="Имя пользователя" />
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding AverageStepsNumber}" Width="80">
+                        <AccessText Text="Среднее количество шагов" />
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding TheBestResult}" Width="80">
+                        <AccessText Text="Лучший результат" />
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding TheWorstResult}" Width="80">
+                        <AccessText Text="Худший результат" />
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
 
     </Grid>
 </Window>
