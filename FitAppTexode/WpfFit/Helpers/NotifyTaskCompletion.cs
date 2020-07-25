@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 
-namespace WpfFit.ViewModels
+namespace WpfFit.Helpers
 {
     // https://docs.microsoft.com/en-us/archive/msdn-magazine/2014/march/async-programming-patterns-for-asynchronous-mvvm-applications-data-binding
     public sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
@@ -54,7 +54,7 @@ namespace WpfFit.ViewModels
         {
             get
             {
-                return (Task.Status == TaskStatus.RanToCompletion) ? Task.Result : default(TResult);
+                return Task.Status == TaskStatus.RanToCompletion ? Task.Result : default;
             }
         }
         public TaskStatus Status { get { return Task.Status; } }
@@ -74,14 +74,14 @@ namespace WpfFit.ViewModels
         {
             get
             {
-                return (Exception == null) ? null : Exception.InnerException;
+                return Exception == null ? null : Exception.InnerException;
             }
         }
         public string ErrorMessage
         {
             get
             {
-                return (InnerException == null) ? null : InnerException.Message;
+                return InnerException == null ? null : InnerException.Message;
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;

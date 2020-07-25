@@ -12,6 +12,8 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Media;
+using WpfFit.Helpers;
 using WpfFit.Models;
 using WpfFit.Readers;
 using WpfFit.Services;

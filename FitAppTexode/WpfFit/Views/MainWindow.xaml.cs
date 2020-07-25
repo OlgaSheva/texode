@@ -36,5 +36,6 @@ namespace WpfFit
 
             DataContext = new MainViewModel(fileService);
         }
+
     }
 }

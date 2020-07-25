@@ -3,10 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfFit"
+        xmlns:local="clr-namespace:WpfFit"        
+        xmlns:sc="clr-namespace:WpfFit.Helpers"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1200">
     <Window.Resources>
+        <sc:ConditionConverter x:Key="conditionConverter" />
+
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Margin" Value="5" />
@@ -16,10 +19,6 @@
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="TextAlignment" Value="Center" />
         </Style>
-        <!--<Style TargetType="Button">
-            <Setter Property="Width" Value="40" />
-            <Setter Property="Margin" Value="5" />
-        </Style>-->
     </Window.Resources>
     
     <Grid>
@@ -52,7 +51,32 @@
 
         <ListView ItemsSource="{Binding Users.Result}"
                   SelectedItem="{Binding SelectedUser}"
-                  Grid.Column="0" Grid.Row="2" Margin="5 0 5 5" HorizontalAlignment="Center" Name="ListView" VerticalAlignment="Top">
+                  Grid.Column="0" Grid.Row="2" Margin="5 0 5 5" HorizontalAlignment="Left" Name="ListView" VerticalAlignment="Top">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding TheWorstResult}" Value="0">
+                            <Setter Property="Background" Value="Red" />
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Value="True">
+                                    <Condition.Binding>
+                                        <MultiBinding Converter="{StaticResource conditionConverter}">
+                                            <!-- the best or worst results differ from the average number
+                                            of steps for the entire period (for this user) by more than 20% -->
+                                            <Binding Path="AverageStepsNumber" />
+                                            <Binding Path="TheBestResult" />
+                                            <Binding Path="TheWorstResult" />
+                                        </MultiBinding>
+                                    </Condition.Binding>
+                                </Condition>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="#7FFFD4" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding UserName}" Width="auto">
@@ -70,6 +94,8 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        
+        
 
     </Grid>
 </Window>
