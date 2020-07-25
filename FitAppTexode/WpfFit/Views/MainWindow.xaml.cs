@@ -34,7 +34,7 @@ namespace WpfFit
             IFileReader fileReader = new JsonFileReader(configuration);
             IFileService fileService = new JsonFileService(fileReader);
 
-            DataContext = new MainViewModel(fileService);
+            DataContext = new MainViewModel(configuration, fileService);
         }
 
     }

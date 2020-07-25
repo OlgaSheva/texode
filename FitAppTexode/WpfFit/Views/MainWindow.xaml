@@ -34,10 +34,13 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.ColumnSpan="2" >
-            <MenuItem Header="Сохранить">
-                <MenuItem Header="XML" Command="{Binding SaveCommand}" />
-                <MenuItem Header="JSON" Command="{Binding SaveCommand}" />
-                <MenuItem Header="CSV" Command="{Binding SaveCommand}" />
+            <MenuItem Header="Меню">
+                <MenuItem Header="Сохранить">
+                    <MenuItem Header="XML" Command="{Binding SaveXmlCommand}" CommandParameter="{Binding SelectedUser}" />
+                    <MenuItem Header="JSON" Command="{Binding SaveJsonCommand}" CommandParameter="{Binding SelectedUser}" />
+                    <MenuItem Header="CSV" Command="{Binding SaveCsvCommand}" CommandParameter="{Binding SelectedUser}" />
+                </MenuItem>
+                <MenuItem Header="Загрузить"/>
             </MenuItem>
         </Menu>
 
@@ -105,10 +108,10 @@
                 <lvc:LineSeries Values="{Binding SelectedUserSteps}" />
             </lvc:CartesianChart.Series>
             <lvc:CartesianChart.AxisY>
-                <lvc:Axis Title="Шаги" LabelFormatter="{Binding Days}"></lvc:Axis>
+                <lvc:Axis Title="Шаги" LabelFormatter="{Binding Days}"  MinValue="0"></lvc:Axis>
             </lvc:CartesianChart.AxisY>
             <lvc:CartesianChart.AxisX>
-                <lvc:Axis Title="Дни" MinValue="0"></lvc:Axis>
+                <lvc:Axis Title="Дни"></lvc:Axis>
             </lvc:CartesianChart.AxisX>
         </lvc:CartesianChart>
 
