@@ -61,9 +61,6 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding TheWorstResult}" Value="0">
-                            <Setter Property="Background" Value="Red" />
-                        </DataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Value="True">
@@ -108,7 +105,7 @@
                 <lvc:LineSeries Values="{Binding SelectedUserSteps}" />
             </lvc:CartesianChart.Series>
             <lvc:CartesianChart.AxisY>
-                <lvc:Axis Title="Шаги" Labels="{Binding Days}"  MinValue="0"></lvc:Axis>
+                <lvc:Axis Title="Шаги" Labels="{Binding Days}" MinValue="0"></lvc:Axis>
             </lvc:CartesianChart.AxisY>
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis Title="Дни"></lvc:Axis>

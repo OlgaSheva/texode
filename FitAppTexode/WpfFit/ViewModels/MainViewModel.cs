@@ -36,8 +36,6 @@ namespace WpfFit.ViewModels
         private ChartValues<int> _days;
 
         #region properties
-        //public Brush DangerBrush { get; set; }
-        //public CartesianMapper<ObservableValue> Mapper { get; set; }
 
         public NotifyTaskCompletion<IList<User>> Users
         {
@@ -95,13 +93,7 @@ namespace WpfFit.ViewModels
             _directory = configuration?.GetSection("Directory").Value;
 
             Users = new NotifyTaskCompletion<IList<User>>(_fileService.GetUsersStatistic());
-
-            //Mapper = Mappers.Xy<ObservableValue>()
-            //    .X((item, index) => index)
-            //    .Y(item => item.Value)
-            //    .Fill(item => item.Value > 40000 ? DangerBrush : null)
-            //    .Stroke(item => item.Value > 40000 ? DangerBrush : null);
-            //DangerBrush = new SolidColorBrush(Color.FromRgb(238, 83, 80));
+            ColorMinAndMaxPoint();
         }
 
         #region save commands
@@ -177,5 +169,18 @@ namespace WpfFit.ViewModels
         }
 
         #endregion
+
+        private void ColorMinAndMaxPoint()
+        {
+            // color the minimum and maximum points of the graph
+            var mapper = new CartesianMapper<int>()
+                .X((value, index) => index)
+                .Y(value => value)
+                .Fill((value, index) =>
+                value == SelectedUser.TheBestResult ?
+                    Brushes.Green : value == SelectedUser.TheWorstResult ?
+                        Brushes.Red : null);
+            LiveCharts.Charting.For<int>(mapper, SeriesOrientation.Horizontal);
+        }
     }
 }
