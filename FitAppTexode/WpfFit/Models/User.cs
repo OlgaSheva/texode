@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 
 namespace WpfFit.Models
 {
@@ -11,6 +12,7 @@ namespace WpfFit.Models
         /// <summary>
         /// User full name.
         /// </summary>
+        [JsonPropertyName("User")]
         public string UserName { get; set; }
 
         /// <summary>

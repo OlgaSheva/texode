@@ -30,9 +30,23 @@ namespace WpfFit.Services
         /// <returns>A <see cref="Task{IList{User}}".</returns>
         public async Task<IList<User>> GetUsersStatistic()
         {
-            var users = new List<User>();
-
             var allStatistic = await _fileReader.ReadDirectory();
+            return GetUsers(allStatistic);
+        }
+
+        /// <summary>
+        /// Get all users statictic.
+        /// </summary>
+        /// <returns>A <see cref="Task{IList{User}}".</returns>
+        public async Task<IList<User>> GetUsersStatistic(string[] files)
+        {
+            var allStatistic = await _fileReader.ReadFiles(files);
+            return GetUsers(allStatistic);
+        }
+
+        private static IList<User> GetUsers(IDictionary<int, IList<UserInformationForADay>> allStatistic)
+        {
+            var users = new List<User>();
 
             var usersData = new List<User>();
 

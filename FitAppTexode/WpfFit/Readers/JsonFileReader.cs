@@ -15,7 +15,6 @@ namespace WpfFit.Readers
     /// </summary>
     public class JsonFileReader : IFileReader
     {
-        private readonly IConfiguration _configuration;
         private readonly string _directory;
 
         /// <summary>
@@ -23,10 +22,9 @@ namespace WpfFit.Readers
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <exception cref="ArgumentNullException">Configuration is null.</exception>
-        public JsonFileReader(IConfiguration configuration)
+        public JsonFileReader(string directory)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _directory = _configuration.GetSection("Directory").Value;
+            _directory = directory ?? throw new ArgumentNullException(nameof(directory));
         }
 
         /// <summary>
@@ -44,11 +42,22 @@ namespace WpfFit.Readers
                 targetDirectory = _directory;
             }
 
-            var allStatistic = new Dictionary<int, IList<UserInformationForADay>>();
-
             // Process the list of files found in the directory.
             string[] fileEntries = Directory.GetFiles(targetDirectory);
-            foreach (string fileName in fileEntries)
+            IDictionary<int, IList<UserInformationForADay>> allStatistic = await ReadFiles(fileEntries);
+
+            // Recurse into subdirectories of this directory.
+            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+            foreach (string subdirectory in subdirectoryEntries)
+                await ReadDirectory(subdirectory);
+
+            return allStatistic;
+        }
+
+        public async Task<IDictionary<int, IList<UserInformationForADay>>> ReadFiles(string[] files)
+        {
+            var allStatistic = new Dictionary<int, IList<UserInformationForADay>>();
+            foreach (string fileName in files)
             {
                 // Only files with format name 'day1', 'day15', ...  are accepted
                 if (!int.TryParse(Regex.Match(fileName, "\\d+").Value, out int dayNumber))
@@ -66,11 +75,6 @@ namespace WpfFit.Readers
                     // TODO: bad file format notification
                 }
             }
-
-            // Recurse into subdirectories of this directory.
-            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
-            foreach (string subdirectory in subdirectoryEntries)
-                await ReadDirectory(subdirectory);
 
             return allStatistic;
         }
