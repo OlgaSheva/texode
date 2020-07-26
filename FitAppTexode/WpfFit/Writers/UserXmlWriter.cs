@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,20 +10,23 @@ namespace WpfFit.Writers
     /// <summary>
     /// User XML writer.
     /// </summary>
-    internal class UserXmlWriter
+    internal class UserXmlWriter : IUserWriter
     {
-        private readonly IConfiguration _configuration;
-        private readonly string _directory;
+        private readonly StreamWriter _writer;
 
-        public UserXmlWriter(IConfiguration configuration)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserXmlWriter"/> class.
+        /// </summary>
+        /// <param name="writer">The file writer.</param>
+        /// <exception cref="ArgumentNullException">Writer is null.</exception>
+        public UserXmlWriter(StreamWriter writer)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _directory = _configuration.GetSection("Directory").Value;
+            _writer = writer ?? throw new ArgumentNullException(nameof(writer));
         }
 
+        /// <inheritdoc/>
         public async Task Write(User user)
         {
-            using StreamWriter writer = new StreamWriter(File.Create($"{_directory}\\{user.UserName}.xml"));
             XElement userInfo = new XElement("user");
             var doc = new XDocument(
                new XDeclaration("1.0", "utf-16", "yes"),
@@ -48,7 +50,7 @@ namespace WpfFit.Writers
             }
             userInfo.Add(userData);
 
-            await doc.SaveAsync(writer, SaveOptions.None, default(CancellationToken));
+            await doc.SaveAsync(_writer, SaveOptions.None, default(CancellationToken));
         }
     }
 }

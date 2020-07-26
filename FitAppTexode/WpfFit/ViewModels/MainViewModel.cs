@@ -26,7 +26,7 @@ namespace WpfFit.ViewModels
 {
     public class MainViewModel : BaseVM
     {
-        private readonly IConfiguration _configuration;
+        private readonly string _directory;
         private User _selectedUser;
         private ChartValues<int> _selectedUserSteps;        
 
@@ -59,7 +59,7 @@ namespace WpfFit.ViewModels
 
         public MainViewModel(IConfiguration configuration, IFileService fileService)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _directory = configuration?.GetSection("Directory").Value;
 
             Users = new NotifyTaskCompletion<IList<User>>(fileService.GetUsersStatistic());
 
@@ -79,7 +79,8 @@ namespace WpfFit.ViewModels
                 return _saveJsonCommand ??
                   (_saveJsonCommand = new AsyncCommand<User>(async (user) =>
                   {
-                      await new UserJsonWriter(_configuration).Write(user);
+                      using StreamWriter writer = new StreamWriter(File.Create($"{_directory}\\{user.UserName}.json"));
+                      await new UserJsonWriter(writer).Write(user);
                   }));
             }
         }
@@ -92,7 +93,8 @@ namespace WpfFit.ViewModels
                 return _saveXmlCommand ??
                   (_saveXmlCommand = new AsyncCommand<User>(async (user) =>
                   {
-                      await new UserXmlWriter(_configuration).Write(user);
+                      using StreamWriter writer = new StreamWriter(File.Create($"{_directory}\\{user.UserName}.xml"));
+                      await new UserXmlWriter(writer).Write(user);
                   }));
             }
         }
@@ -105,7 +107,8 @@ namespace WpfFit.ViewModels
                 return _saveCsvCommand ??
                   (_saveCsvCommand = new AsyncCommand<User>(async (user) =>
                   {
-                      await new UserCsvWriter(_configuration).Write(user);
+                      using StreamWriter writer = new StreamWriter(File.Create($"{_directory}\\{user.UserName}.csv"), Encoding.UTF8);
+                      await new UserCsvWriter(writer).Write(user);
                   }));
             }
         }
