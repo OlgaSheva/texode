@@ -1,20 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using WpfFit.Readers;
+﻿using System.Windows;
 using WpfFit.Services;
 using WpfFit.ViewModels;
 
@@ -25,19 +9,20 @@ namespace WpfFit
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(IFileService fileService, IDialogService dialogService)
         {
             InitializeComponent();
 
-            IConfiguration configuration = new ConfigurationBuilder()
-              .AddJsonFile("appsettings.json", true, true)
-              .Build();
-            string directory = configuration.GetSection("Directory").Value;
-            IFileReader fileReader = new JsonFileReader(directory);
-            IFileService fileService = new JsonFileService(fileReader);
-            IDialogService dialogService = new DefaultDialogService();
+            //IConfiguration configuration = new ConfigurationBuilder()
+            //  .AddJsonFile("appsettings.json", true, true)
+            //  .Build();
+            //string directory = configuration.GetSection("Directory").Value;
+            //IErrorHandler errorHandler = new DefaultErrorHandler();
+            //IFileReader fileReader = new JsonFileReader(errorHandler, directory);
+            //IDialogService dialogService = new DefaultDialogService();
+            //IFileService fileService = new JsonFileService(fileReader);
 
-            DataContext = new MainViewModel(directory, fileService, dialogService);
+            DataContext = new MainViewModel(fileService, dialogService);
         }
     }
 }

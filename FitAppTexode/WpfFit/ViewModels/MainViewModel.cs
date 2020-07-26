@@ -1,25 +1,13 @@
 ﻿using LiveCharts;
 using LiveCharts.Configurations;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Media;
 using WpfFit.AsyncCommand;
 using WpfFit.Helpers;
 using WpfFit.Models;
-using WpfFit.Readers;
 using WpfFit.Services;
 using WpfFit.Writers;
 
@@ -99,7 +87,7 @@ namespace WpfFit.ViewModels
         }
         #endregion
 
-        public MainViewModel(string directory, IFileService fileService, IDialogService dialogService)
+        public MainViewModel(IFileService fileService, IDialogService dialogService)
         {
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));

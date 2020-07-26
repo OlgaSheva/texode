@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WpfFit.ErrorHandler;
 using WpfFit.Models;
 
 namespace WpfFit.Readers
@@ -15,6 +16,7 @@ namespace WpfFit.Readers
     /// </summary>
     public class JsonFileReader : IFileReader
     {
+        private readonly IErrorHandler _errorHandler;
         private readonly string _directory;
 
         /// <summary>
@@ -22,8 +24,9 @@ namespace WpfFit.Readers
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <exception cref="ArgumentNullException">Configuration is null.</exception>
-        public JsonFileReader(string directory)
+        public JsonFileReader(IErrorHandler errorHandler, string directory)
         {
+            _errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
             _directory = directory ?? throw new ArgumentNullException(nameof(directory));
         }
 
@@ -72,7 +75,7 @@ namespace WpfFit.Readers
                 }
                 catch (JsonException jsonex)
                 {
-                    // TODO: bad file format notification
+                    _errorHandler.HandleError(jsonex, $"Файл '{fileName}' не соответствует формату.");
                 }
             }
 

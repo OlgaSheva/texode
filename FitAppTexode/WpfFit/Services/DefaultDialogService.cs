@@ -4,12 +4,21 @@ using System.Windows;
 
 namespace WpfFit.Services
 {
+    /// <summary>
+    /// Default file dialog service.
+    /// </summary>
     public class DefaultDialogService : IDialogService
     {
+        /// <inheritdoc/>
         public string FilePath { get; set; }
+
+        /// <inheritdoc/>
         public string FileExtension { get; set; }
+
+        /// <inheritdoc/>
         public string[] FilePaths { get; set; }
 
+        /// <inheritdoc/>
         public bool OpenFileDialog()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
@@ -26,6 +35,7 @@ namespace WpfFit.Services
             return false;
         }
 
+        /// <inheritdoc/>
         public bool SaveFileDialog()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
@@ -42,6 +52,7 @@ namespace WpfFit.Services
             return false;
         }
 
+        /// <inheritdoc/>
         public void ShowMessage(string message)
         {
             MessageBox.Show(message);
