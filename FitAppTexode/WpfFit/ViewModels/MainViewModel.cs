@@ -27,16 +27,19 @@ namespace WpfFit.ViewModels
 {
     public class MainViewModel : BaseVM
     {
+        #region private fields
         private readonly IFileService _fileService;
         private readonly IDialogService _dialogService;
-        private readonly string _directory;
         private User _selectedUser;
         private NotifyTaskCompletion<IList<User>> _users;
         private ChartValues<int> _selectedUserSteps;
         private ChartValues<int> _days;
 
-        #region properties
+        private AsyncCommand<object> _openCommand;
+        private AsyncCommand<User> _saveCommand;
+        #endregion
 
+        #region properties
         public NotifyTaskCompletion<IList<User>> Users
         {
             get { return _users; } 
@@ -60,6 +63,10 @@ namespace WpfFit.ViewModels
                     var days = _selectedUser.UserData.Select(u => (u.Key));
                     Days = new ChartValues<int>(days);
                 }
+                else
+                {
+                    SelectedUserSteps = null;
+                }
                 OnPropertyChanged("SelectedUser");
             }
         }
@@ -70,6 +77,13 @@ namespace WpfFit.ViewModels
             set
             {
                 _selectedUserSteps = value;
+
+                // color the minimum and maximum points of the selected user steps graph
+                if (value != null)
+                {
+                    ColorMinAndMaxPoint();
+                }
+
                 OnPropertyChanged("SelectedUserSteps");
             }
         }
@@ -83,68 +97,17 @@ namespace WpfFit.ViewModels
                 OnPropertyChanged("Days");
             }
         }
-
         #endregion
 
-        public MainViewModel(IConfiguration configuration, IFileService fileService, IDialogService dialogService)
+        public MainViewModel(string directory, IFileService fileService, IDialogService dialogService)
         {
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
-            _directory = configuration?.GetSection("Directory").Value;
 
             Users = new NotifyTaskCompletion<IList<User>>(_fileService.GetUsersStatistic());
-            ColorMinAndMaxPoint();
         }
 
-        #region save commands
-
-        private AsyncCommand<User> _saveJsonCommand;
-        public AsyncCommand<User> SaveJsonCommand
-        {
-            get
-            {
-                return _saveJsonCommand ??
-                  (_saveJsonCommand = new AsyncCommand<User>(async (user) =>
-                  {
-                      using StreamWriter writer = new StreamWriter(File.Create($"{_directory}\\{user.UserName}.json"));
-                      await new UserJsonWriter(writer).Write(user);
-                  }));
-            }
-        }
-
-        private AsyncCommand<User> _saveXmlCommand;
-        public AsyncCommand<User> SaveXmlCommand
-        {
-            get
-            {
-                return _saveXmlCommand ??
-                  (_saveXmlCommand = new AsyncCommand<User>(async (user) =>
-                  {
-                      using StreamWriter writer = new StreamWriter(File.Create($"{_directory}\\{user.UserName}.xml"));
-                      await new UserXmlWriter(writer).Write(user);
-                  }));
-            }
-        }
-
-        private AsyncCommand<User> _saveCsvCommand;
-        public AsyncCommand<User> SaveCsvCommand
-        {
-            get
-            {
-                return _saveCsvCommand ??
-                  (_saveCsvCommand = new AsyncCommand<User>(async (user) =>
-                  {
-                      using StreamWriter writer = new StreamWriter(File.Create($"{_directory}\\{user.UserName}.csv"), Encoding.UTF8);
-                      await new UserCsvWriter(writer).Write(user);
-                  }));
-            }
-        }
-
-        #endregion
-
-        #region open folder command
-
-        private AsyncCommand<object> _openCommand;
+        #region open files command
         public AsyncCommand<object> OpenCommand
         {
             get
@@ -167,20 +130,62 @@ namespace WpfFit.ViewModels
                   }));
             }
         }
+        #endregion
+
+        #region save User command
+        public AsyncCommand<User> SaveCommand
+        {
+            get
+            {
+                return _saveCommand ??
+                    (_saveCommand = new AsyncCommand<User>(async (user) =>
+                    {
+                        try
+                        {
+                            if (_dialogService.SaveFileDialog() == true)
+                            {
+                                var fileExtension = _dialogService.FileExtension;
+                                using StreamWriter writer = new StreamWriter(File.Create(_dialogService.FilePath));
+                                switch (fileExtension)
+                                {
+                                    case ".xml": 
+                                        await new UserXmlWriter(writer).Write(user);
+                                        break;
+                                    case ".json": 
+                                        await new UserJsonWriter(writer).Write(user);
+                                        break;
+                                    case ".csv":
+                                        await new UserCsvWriter(writer).Write(user);
+                                        break;
+                                    default:
+                                        throw new FileFormatException("Неподдерживаемый формат файла");
+                                }
+                                
+                                _dialogService.ShowMessage("Файл сохранен");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _dialogService.ShowMessage(ex.Message);
+                        }
+                    }));
+            }
+        }
 
         #endregion
 
+        #region private helpers
         private void ColorMinAndMaxPoint()
         {
-            // color the minimum and maximum points of the graph
             var mapper = new CartesianMapper<int>()
                 .X((value, index) => index)
                 .Y(value => value)
                 .Fill((value, index) =>
-                value == SelectedUser.TheBestResult ?
-                    Brushes.Green : value == SelectedUser.TheWorstResult ?
+                value == SelectedUser?.TheBestResult ?
+                    Brushes.Green : value == SelectedUser?.TheWorstResult ?
                         Brushes.Red : null);
             LiveCharts.Charting.For<int>(mapper, SeriesOrientation.Horizontal);
         }
+        #endregion
     }
 }

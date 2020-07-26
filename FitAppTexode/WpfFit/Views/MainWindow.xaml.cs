@@ -32,11 +32,12 @@ namespace WpfFit
             IConfiguration configuration = new ConfigurationBuilder()
               .AddJsonFile("appsettings.json", true, true)
               .Build();
-            IFileReader fileReader = new JsonFileReader(configuration.GetSection("Directory").Value);
+            string directory = configuration.GetSection("Directory").Value;
+            IFileReader fileReader = new JsonFileReader(directory);
             IFileService fileService = new JsonFileService(fileReader);
             IDialogService dialogService = new DefaultDialogService();
 
-            DataContext = new MainViewModel(configuration, fileService, dialogService);
+            DataContext = new MainViewModel(directory, fileService, dialogService);
         }
     }
 }

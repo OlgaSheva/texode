@@ -35,11 +35,7 @@
 
         <Menu Grid.ColumnSpan="2" >
             <MenuItem Header="Меню">
-                <MenuItem Header="Сохранить">
-                    <MenuItem Header="XML" Command="{Binding SaveXmlCommand}" CommandParameter="{Binding SelectedUser}" />
-                    <MenuItem Header="JSON" Command="{Binding SaveJsonCommand}" CommandParameter="{Binding SelectedUser}" />
-                    <MenuItem Header="CSV" Command="{Binding SaveCsvCommand}" CommandParameter="{Binding SelectedUser}" />
-                </MenuItem>
+                <MenuItem Header="Сохранить" Command="{Binding SaveCommand}" CommandParameter="{Binding SelectedUser}" />
                 <MenuItem Header="Открыть" Command="{Binding OpenCommand}" />
             </MenuItem>
         </Menu>

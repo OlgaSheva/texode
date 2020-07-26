@@ -6,6 +6,16 @@
     public interface IDialogService
     {
         /// <summary>
+        /// The file extension.
+        /// </summary>
+        public string FileExtension { get; set; }
+
+        /// <summary>
+        /// Path to the selected file.
+        /// </summary>
+        public string FilePath { get; set; }
+
+        /// <summary>
         /// Paths to the selected files.
         /// </summary>
         public string[] FilePaths { get; set; }
