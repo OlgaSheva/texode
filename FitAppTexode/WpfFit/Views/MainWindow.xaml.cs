@@ -13,15 +13,6 @@ namespace WpfFit
         {
             InitializeComponent();
 
-            //IConfiguration configuration = new ConfigurationBuilder()
-            //  .AddJsonFile("appsettings.json", true, true)
-            //  .Build();
-            //string directory = configuration.GetSection("Directory").Value;
-            //IErrorHandler errorHandler = new DefaultErrorHandler();
-            //IFileReader fileReader = new JsonFileReader(errorHandler, directory);
-            //IDialogService dialogService = new DefaultDialogService();
-            //IFileService fileService = new JsonFileService(fileReader);
-
             DataContext = new MainViewModel(fileService, dialogService);
         }
     }

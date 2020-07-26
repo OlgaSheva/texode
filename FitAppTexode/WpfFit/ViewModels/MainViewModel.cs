@@ -23,18 +23,18 @@ namespace WpfFit.ViewModels
         private ChartValues<int> _selectedUserSteps;
         private ChartValues<int> _days;
 
-        private AsyncCommand<object> _openCommand;
+        private AsyncCommand<NotifyTaskCompletion<IList<User>>> _openCommand;
         private AsyncCommand<User> _saveCommand;
         #endregion
 
         #region properties
         public NotifyTaskCompletion<IList<User>> Users
         {
-            get { return _users; } 
+            get { return _users; }
             set
             {
                 _users = value;
-                OnPropertyChanged("Users");
+                OnPropertyChanged(nameof(Users));
             }
         }
 
@@ -55,7 +55,7 @@ namespace WpfFit.ViewModels
                 {
                     SelectedUserSteps = null;
                 }
-                OnPropertyChanged("SelectedUser");
+                OnPropertyChanged(nameof(SelectedUser));
             }
         }
 
@@ -72,7 +72,7 @@ namespace WpfFit.ViewModels
                     ColorMinAndMaxPoint();
                 }
 
-                OnPropertyChanged("SelectedUserSteps");
+                OnPropertyChanged(nameof(SelectedUserSteps));
             }
         }
 
@@ -82,7 +82,7 @@ namespace WpfFit.ViewModels
             set
             {
                 _days = value;
-                OnPropertyChanged("Days");
+                OnPropertyChanged(nameof(Days));
             }
         }
         #endregion
@@ -96,26 +96,25 @@ namespace WpfFit.ViewModels
         }
 
         #region open files command
-        public AsyncCommand<object> OpenCommand
+        public AsyncCommand<NotifyTaskCompletion<IList<User>>> OpenCommand
         {
             get
             {
-                return _openCommand ??
-                  (_openCommand = new AsyncCommand<object>(async (obj) =>
-                  {
-                      try
-                      {
-                          if (_dialogService.OpenFileDialog() == true)
-                          {
-                              Users = new NotifyTaskCompletion<IList<User>>(_fileService.GetUsersStatistic(_dialogService.FilePaths));
-                              _dialogService.ShowMessage("Файлы открыты");
-                          }
-                      }
-                      catch (Exception ex)
-                      {
-                          _dialogService.ShowMessage(ex.Message);
-                      }
-                  }));
+                return _openCommand ??= new AsyncCommand<NotifyTaskCompletion<IList<User>>>(async (obj) =>
+                {
+                    try
+                    {
+                        if (_dialogService.OpenFileDialog() == true)
+                        {
+                            Users = new NotifyTaskCompletion<IList<User>>(_fileService.GetUsersStatistic(_dialogService.FilePaths));
+                            _dialogService.ShowMessage("Файлы открыты");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _dialogService.ShowMessage(ex.Message);
+                    }
+                });
             }
         }
         #endregion
@@ -125,38 +124,37 @@ namespace WpfFit.ViewModels
         {
             get
             {
-                return _saveCommand ??
-                    (_saveCommand = new AsyncCommand<User>(async (user) =>
+                return _saveCommand ??= new AsyncCommand<User>(async (user) =>
+                {
+                    try
                     {
-                        try
+                        if (_dialogService.SaveFileDialog() == true)
                         {
-                            if (_dialogService.SaveFileDialog() == true)
+                            var fileExtension = _dialogService.FileExtension;
+                            using StreamWriter writer = new StreamWriter(File.Create(_dialogService.FilePath));
+                            switch (fileExtension)
                             {
-                                var fileExtension = _dialogService.FileExtension;
-                                using StreamWriter writer = new StreamWriter(File.Create(_dialogService.FilePath));
-                                switch (fileExtension)
-                                {
-                                    case ".xml": 
-                                        await new UserXmlWriter(writer).Write(user);
-                                        break;
-                                    case ".json": 
-                                        await new UserJsonWriter(writer).Write(user);
-                                        break;
-                                    case ".csv":
-                                        await new UserCsvWriter(writer).Write(user);
-                                        break;
-                                    default:
-                                        throw new FileFormatException("Неподдерживаемый формат файла");
-                                }
-                                
-                                _dialogService.ShowMessage("Файл сохранен");
+                                case ".xml":
+                                    await new UserXmlWriter(writer).Write(user);
+                                    break;
+                                case ".json":
+                                    await new UserJsonWriter(writer).Write(user);
+                                    break;
+                                case ".csv":
+                                    await new UserCsvWriter(writer).Write(user);
+                                    break;
+                                default:
+                                    throw new FileFormatException("Неподдерживаемый формат файла");
                             }
+
+                            _dialogService.ShowMessage("Файл сохранен");
                         }
-                        catch (Exception ex)
-                        {
-                            _dialogService.ShowMessage(ex.Message);
-                        }
-                    }));
+                    }
+                    catch (Exception ex)
+                    {
+                        _dialogService.ShowMessage(ex.Message);
+                    }
+                });
             }
         }
 
