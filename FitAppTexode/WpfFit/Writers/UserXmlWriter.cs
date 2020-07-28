@@ -29,7 +29,7 @@ namespace WpfFit.Writers
         {
             XElement userInfo = new XElement("user");
             var doc = new XDocument(
-               new XDeclaration("1.0", "utf-16", "yes"),
+               new XDeclaration("1.0", "utf-8", "yes"),
                userInfo);
             userInfo.Add(
                 new XElement("User", user.UserName),

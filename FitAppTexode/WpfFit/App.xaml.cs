@@ -25,7 +25,7 @@ namespace WpfFit
         private void ConfigureServices(IServiceCollection services)
         {
             IConfiguration configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile("appsettings.json")
                 .Build();
             // The default directory for the initial download of files.
             string directory = configuration.GetSection("Directory").Value;
